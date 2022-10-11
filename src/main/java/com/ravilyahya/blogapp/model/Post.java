@@ -8,6 +8,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 
 @Entity
@@ -33,6 +36,9 @@ public class Post {
 
     @ManyToOne
     private User user;
+
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)
+    private Set<Comment> comments = new HashSet<>();
 
     @CreationTimestamp
     @Column(nullable = false)

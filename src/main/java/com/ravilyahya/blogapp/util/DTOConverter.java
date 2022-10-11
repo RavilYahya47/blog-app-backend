@@ -1,9 +1,11 @@
 package com.ravilyahya.blogapp.util;
 
 import com.ravilyahya.blogapp.model.Category;
+import com.ravilyahya.blogapp.model.Comment;
 import com.ravilyahya.blogapp.model.Post;
 import com.ravilyahya.blogapp.model.User;
 import com.ravilyahya.blogapp.payloads.CategoryDTO;
+import com.ravilyahya.blogapp.payloads.CommentDTO;
 import com.ravilyahya.blogapp.payloads.PostDTO;
 import com.ravilyahya.blogapp.payloads.UserDTO;
 import lombok.RequiredArgsConstructor;
@@ -42,5 +44,13 @@ public class DTOConverter {
 
     public PostDTO postToPostDTO(Post post){
         return this.modelMapper.map(post,PostDTO.class);
+    }
+
+    public Comment commentDTOToComment(CommentDTO commentDTO){
+        return this.modelMapper.map(commentDTO, Comment.class);
+    }
+
+    public CommentDTO commentToCommentDTO(Comment comment){
+        return modelMapper.map(comment,CommentDTO.class);
     }
 }
