@@ -7,21 +7,23 @@ import com.ravilyahya.blogapp.repository.UserRepository;
 import com.ravilyahya.blogapp.service.UserService;
 import com.ravilyahya.blogapp.util.DTOConverter;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final DTOConverter dtoConverter;
 
     @Override
     public UserDTO createUser(UserDTO user) {
-        User savedUser =  userRepository.save(DTOConverter.userDTOToUser(user));
-        return DTOConverter.userToUserDTO(savedUser);
+        User savedUser =  userRepository.save(dtoConverter.userDTOToUser(user));
+        return dtoConverter.userToUserDTO(savedUser);
     }
 
     @Override
@@ -37,12 +39,12 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userRepository.save(user);
 
 
-        return DTOConverter.userToUserDTO(updatedUser);
+        return dtoConverter.userToUserDTO(updatedUser);
     }
 
     @Override
     public UserDTO getUserById(Long userId) {
-        return DTOConverter.userToUserDTO(
+        return dtoConverter.userToUserDTO(
                 userRepository.findById(userId)
                 .orElseThrow(() ->new ResourceNotFoundException("User","id",userId))
         );
@@ -51,7 +53,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
-        List<UserDTO> usersDTO = users.stream().map(DTOConverter::userToUserDTO).toList();
+        List<UserDTO> usersDTO = users.stream().map(dtoConverter::userToUserDTO).toList();
         return usersDTO;
     }
 

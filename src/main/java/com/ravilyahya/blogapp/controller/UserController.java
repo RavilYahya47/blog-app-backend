@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -19,13 +20,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user){
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO user){
         UserDTO createdUser = userService.createUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable(name = "userId") Long userId,@RequestBody UserDTO user ){
+    public ResponseEntity<UserDTO> updateUser(@PathVariable(name = "userId") Long userId,@Valid @RequestBody UserDTO user ){
         UserDTO updatedUser = userService.updateUser(user,userId);
         return ResponseEntity.ok(updatedUser);
     }
