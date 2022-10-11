@@ -2,6 +2,7 @@ package com.ravilyahya.blogapp.controller;
 
 import com.ravilyahya.blogapp.payloads.ApiResponse;
 import com.ravilyahya.blogapp.payloads.PostDTO;
+import com.ravilyahya.blogapp.payloads.PostResponse;
 import com.ravilyahya.blogapp.service.PostService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,9 +47,14 @@ public class PostController {
 
     //get all posts
     @GetMapping("/posts")
-    public ResponseEntity<List<PostDTO>> getAllPosts(){
-        List<PostDTO> postDTOS = postService.getAllPosts();
-        return new ResponseEntity<>(postDTOS, HttpStatus.OK);
+    public ResponseEntity<PostResponse> getAllPosts(
+            @RequestParam (value = "pageNumber",defaultValue = "0",required = false) Integer pageNumber,
+            @RequestParam (value = "pageSize",defaultValue = "5",required = false) Integer pageSize,
+            @RequestParam (value = "sortBy",defaultValue = "postId",required = false) String sortBy,
+            @RequestParam (value = "sortDir",defaultValue = "asc",required = false) String sortDir
+    ){
+        PostResponse postResponse = postService.getAllPosts(pageNumber,pageSize,sortBy,sortDir);
+        return new ResponseEntity<>(postResponse, HttpStatus.OK);
     }
 
     //get post by postid

@@ -5,12 +5,17 @@ import com.ravilyahya.blogapp.model.Category;
 import com.ravilyahya.blogapp.model.Post;
 import com.ravilyahya.blogapp.model.User;
 import com.ravilyahya.blogapp.payloads.PostDTO;
+import com.ravilyahya.blogapp.payloads.PostResponse;
 import com.ravilyahya.blogapp.repository.CategoryRepository;
 import com.ravilyahya.blogapp.repository.PostRepository;
 import com.ravilyahya.blogapp.repository.UserRepository;
 import com.ravilyahya.blogapp.service.PostService;
 import com.ravilyahya.blogapp.util.DTOConverter;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -63,9 +68,31 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDTO> getAllPosts() {
-        List<PostDTO> postDTOS = postRepository.findAll().stream().map(dtoConverter::postToPostDTO).toList();
-        return postDTOS;
+    public PostResponse getAllPosts(Integer pageNumber, Integer pageSize,String sortBy,String sortDir) {
+
+        Sort sort;
+
+        if(sortDir.equalsIgnoreCase("asc")){
+            sort=Sort.by(sortBy).ascending();
+        }else {
+            sort=Sort.by(sortBy).descending();
+        }
+
+        Pageable pageable = PageRequest.of(pageNumber,pageSize,sort);
+
+        Page<Post> page= postRepository.findAll(pageable);
+        List<Post> posts = page.getContent();
+        List<PostDTO> postDTOS = posts.stream().map(dtoConverter::postToPostDTO).toList();
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(postDTOS);
+        postResponse.setPageNumber(page.getNumber());
+        postResponse.setPageSize(page.getSize());
+        postResponse.setTotalElements(page.getTotalElements());
+        postResponse.setTotalPages(page.getTotalPages());
+        postResponse.setLastPage(page.isLast());
+
+        return postResponse;
     }
 
     @Override
