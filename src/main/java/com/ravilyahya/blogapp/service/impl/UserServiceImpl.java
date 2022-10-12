@@ -1,13 +1,17 @@
 package com.ravilyahya.blogapp.service.impl;
 
+import com.ravilyahya.blogapp.config.AppConstraints;
 import com.ravilyahya.blogapp.exception.ResourceNotFoundException;
+import com.ravilyahya.blogapp.model.Role;
 import com.ravilyahya.blogapp.model.User;
 import com.ravilyahya.blogapp.payloads.UserDTO;
+import com.ravilyahya.blogapp.repository.RoleRepository;
 import com.ravilyahya.blogapp.repository.UserRepository;
 import com.ravilyahya.blogapp.service.UserService;
 import com.ravilyahya.blogapp.util.DTOConverter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +23,18 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final DTOConverter dtoConverter;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
+
+    @Override
+    public UserDTO registerNewUser(UserDTO userDTO) {
+        User user = dtoConverter.userDTOToUser(userDTO);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Role role = roleRepository.findById(AppConstraints.NORMAL).get();
+        user.getRoles().add(role);
+        User savedUser = userRepository.save(user);
+        return dtoConverter.userToUserDTO(savedUser);
+    }
 
     @Override
     public UserDTO createUser(UserDTO user) {

@@ -6,6 +6,7 @@ import com.ravilyahya.blogapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,9 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+
+    //Only ADMIN
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable(name = "userId") Long userId){
         userService.deleteUser(userId);
